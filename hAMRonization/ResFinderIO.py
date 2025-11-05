@@ -26,7 +26,7 @@ class ResFinderIterator(hAMRonizedResultIterator):
     def __init__(self, source, metadata):
 
         # We don't use metadata or field mapping so can just defer to super,
-        # which will open source and invoke our parse method with the open stream.
+        # which opens source and invokes our parse() on the open stream.
         super().__init__(source, dict(), metadata)
 
     def parse(self, handle):
@@ -42,7 +42,7 @@ class ResFinderIterator(hAMRonizedResultIterator):
         # Input data read in ResFinder 4.2+ JSON format.  This has three main elements:
         # - seq_regions: loci/genes that were found, keying into 0 or more phenotypes
         # - seq_variations: mutations that key into a seq_region and 0 or more phenotypes
-        # - phenotypes: antimicriobals keying back into the above objects
+        # - phenotypes: antimicrobials keying back into the above objects
         data = json.load(handle)
 
         # Helpers to fetch database names and versions from the JSON data
@@ -96,7 +96,7 @@ class ResFinderIterator(hAMRonizedResultIterator):
             # Bags to collect variations, phenotypes and notes across the variations
             _aa_vars = list()
             _nt_vars = list()
-            _codon = list()
+            _codons = list()
             _phenos = set()
             _notes = set()
             _pmids = set()
@@ -117,7 +117,7 @@ class ResFinderIterator(hAMRonizedResultIterator):
 
                 _cod_chg = v.get('codon_change')
                 if _cod_chg:
-                    _codon.append(v.get('codon_change'))
+                    _codons.append(_cod_chg)
 
                 # Add the content of the list fields to the bags above
                 _phenos.update(v.get('phenotypes', []))
@@ -129,7 +129,7 @@ class ResFinderIterator(hAMRonizedResultIterator):
             res.predicted_phenotype_confidence_level = _condense_notes(_notes, _pmids)
             res.amino_acid_mutation = _empty_to_none(", ".join(filter(None, _aa_vars)))
             res.nucleotide_mutation = _empty_to_none(", ".join(filter(None, _nt_vars)))
-            res.nucleotide_mutation_interpretation = ("Codon changes: " + " ".join(_codon)) if _codon else None
+            res.nucleotide_mutation_interpretation = ("Codon changes: " + " ".join(_codons)) if _codons else None
 
         # --- Do the actual work --- #
 
@@ -157,7 +157,7 @@ class ResFinderIterator(hAMRonizedResultIterator):
                 res.genetic_variation_type = GENE_PRESENCE
                 set_shared_fields(r)
 
-                # Yield a new hAMRonizedResult ours using super's method as that may do the needful
+                # Yield a new hAMRonizedResult using super's method as that may do the needful
                 yield self.hAMRonize(None, res.__dict__)
 
             # Collect the list of seq_variations (if any) referenced from phenotype p,
@@ -173,7 +173,7 @@ class ResFinderIterator(hAMRonizedResultIterator):
                 set_shared_fields(r)
                 set_variation_fields(r, vs)
 
-                # Yield a new hAMRonizedResult ours using super's method as that may do the needful
+                # Yield a new hAMRonizedResult using super's method as that may do the needful
                 yield self.hAMRonize(None, res.__dict__)
 
 
