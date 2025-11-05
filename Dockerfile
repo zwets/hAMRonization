@@ -1,5 +1,5 @@
 # base image
-FROM python:3.9
+FROM python:3.9-alpine
 
 # metadata
 LABEL base.image="pathon:3.9"
@@ -18,12 +18,12 @@ MAINTAINER Finlay Maguire <finlaymaguire@gmail.com>
 # set the working directory in the container
 WORKDIR /hAMRonization
 
-# copy the dependencies file to the working directory
-COPY . /hAMRonization
+# copy the sources into the container
+COPY . /hAMRonization/src
 
-# install dependencies
-RUN python -m pip install hAMRonization
+# install dependencies and clean all up
+RUN python -m pip --no-cache install ./src && rm -rf ./src
 
 # command to run on container start
-ENTRYPOINT ["hamronize"] 
+ENTRYPOINT ["hamronize"]
 CMD ["--help"]
