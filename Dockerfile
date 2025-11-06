@@ -15,6 +15,9 @@ LABEL tags="Genomics"
 # maintainer
 MAINTAINER Finlay Maguire <finlaymaguire@gmail.com>
 
+# add bash so Nextflow can run the container
+RUN apk add --no-cache bash && rm -rf /var/cache/apk/*
+
 # set the working directory in the container
 WORKDIR /hAMRonization
 
@@ -22,8 +25,7 @@ WORKDIR /hAMRonization
 COPY . /hAMRonization/src
 
 # install dependencies and clean all up
-RUN python -m pip --no-cache install ./src && rm -rf ./src
+RUN python -m pip --no-cache-dir install ./src && rm -rf ./src
 
-# command to run on container start
-ENTRYPOINT ["hamronize"]
-CMD ["--help"]
+# command to run on container start without args
+CMD ["hamronize", "--help"]
