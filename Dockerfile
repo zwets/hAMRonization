@@ -2,7 +2,7 @@
 FROM python:3.9-alpine
 
 # metadata
-LABEL base.image="pathon:3.9"
+LABEL base.image="python:3.9"
 LABEL software="hAMRonization"
 ARG SOFTWARE_VERSION=unspecified
 LABEL software_version=$SOFTWARE_VERSION
