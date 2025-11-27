@@ -48,7 +48,7 @@ def format_interactive_json(combined_records):
 
     grouped_data = combined_records.groupby(
         ["input_file_name", "config_display_name"]
-    ).apply(lambda x: x.to_json(orient="records"))
+    ).apply(lambda x: x.to_json(orient="records"), include_groups=False)
     for (input_file, config), hits in grouped_data.items():
         json_hits = json.loads(hits)
         if input_file not in data_for_summary:
@@ -733,7 +733,11 @@ def summarize_reports(report_paths, summary_type, output_path=None):
 
     # remove any duplicate entries in the parsed_report
     # set can't hash dictionaries unfortunately
-    combined_reports = pd.concat(combined_report_data, ignore_index=True)
+    non_empty_reports = [report for report in combined_report_data if not report.empty]
+    if len(non_empty_reports) > 0:
+        combined_reports = pd.concat(non_empty_reports, ignore_index=True)
+    else:
+        combined_reports = pd.DataFrame(columns=combined_report_data[0].columns)
     total_records = len(combined_reports)
     combined_reports = combined_reports.drop_duplicates()
 
