@@ -156,8 +156,8 @@ class ResFinderIterator(hAMRonizedResultIterator):
 
                 # Set the fields collected from the phenotypes and from the region object
                 res.genetic_variation_type = GENE_PRESENCE
-                res.drug_class = ", ".join(amr_cls)
-                res.antimicrobial_agent = ", ".join(amr_res)
+                res.drug_class = ", ".join(sorted(amr_cls))
+                res.antimicrobial_agent = ", ".join(sorted(amr_res))
                 set_shared_fields(r)
 
                 # Yield a new hAMRonizedResult using super's method as that may do the needful
@@ -187,8 +187,8 @@ class ResFinderIterator(hAMRonizedResultIterator):
 
                 # Set fields we collected plus the region and variant ones as above
                 res.genetic_variation_type = NUCLEOTIDE_VARIANT  # default may be overridden
-                res.drug_class = ", ".join(amr_cls)
-                res.antimicrobial_agent = ", ".join(amr_res)
+                res.drug_class = ", ".join(sorted(amr_cls))
+                res.antimicrobial_agent = ", ".join(sorted(amr_res))
                 set_shared_fields(r)
                 set_variation_fields(r, vs_dict.values())
 
@@ -228,7 +228,7 @@ def _condense_notes(notes, pmids):
     lines += filter(None, notes)
     pmids = list(filter(None, pmids))
     if pmids:
-        lines.append("PMIDs: " + ", ".join(set(pmids)))
+        lines.append("PMIDs: " + ", ".join(sorted(set(pmids))))
     return ". ".join(lines) if lines else None
 
 
